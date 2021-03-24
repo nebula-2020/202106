@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport"
+        content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,initial-scale=1" />
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .btn {
+            background-color: #08f;
+            color: #fff;
+            margin: 10px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .input {
+            border: #08f solid 1px;
+            line-height: 2em;
+            min-height: 2em;
+        }
+    </style>
+</head>
+
+<body>
+	<form action="./signIn" method="post">
+		<input id='id' name='id' placeholder='账号'/>
+		<input id='pwd' name='pwd' type='password' placeholder='密码'/>
+    	<button type="submit" class="btn">Login</button>
+    </form>
+</body>
+</html>

@@ -25,6 +25,6 @@ hs_err_pid*
 # customize
 build/
 .vscode/
-WEB-INF/lib/
+webapp/WEB-INF/lib/
 .settings/
 .mvn/
