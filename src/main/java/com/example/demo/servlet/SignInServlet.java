@@ -30,15 +30,15 @@ public class SignInServlet extends HttpServlet {
 			String name=iterator.next();
 			System.out.println(name);
 		}
-		System.out.println("-=-=-=-");
 		String id = (String) request.getParameter("id");
 		String pwd = (String) request.getParameter("pwd");
 		System.out.println(id);
 		System.out.println(pwd);
 		boolean succeed = (id != null && pwd != null && id.compareTo("管理员") == 0 && pwd.compareTo("root") == 0);
-
-		response.getWriter().write(
-				"<div style='text-align:center;font-size:30vw;'>" + (succeed ? "成 功" : "失 败") + "</div>");
+        if(succeed)
+        {
+            request.getRequestDispatcher("./html/home.html").forward(request, response);
+        }
 
 	}
 
