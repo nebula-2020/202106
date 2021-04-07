@@ -1,9 +1,8 @@
 package com.example.demo.servlet;
 
-import java.io.*;
 import java.io.IOException;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.example.demo.bean.UserBean;
+import com.example.demo.dao.UserDao;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
@@ -20,8 +19,6 @@ public class SignInServlet extends HttpServlet
         // TODO Auto-generated constructor stub
     }
 
-    private static String path = "./jsonDB.json";
-
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
      * response)
@@ -33,43 +30,12 @@ public class SignInServlet extends HttpServlet
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=UTF-8");
-        String id = (String)request.getParameter("id");
+        long id = Long.parseLong(request.getParameter("id"));
         String pwd = (String)request.getParameter("pwd");
-        File file = new File(path);
+        UserDao ud = new UserDao();
+        UserBean user = ud.getUser(id);
 
-        if (!file.exists())
-        {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-        }
-        Long filelength = file.length();
-        byte[] filecontent = new byte[filelength.intValue()];
-        String read = "{}";
-        FileInputStream in = null;
-
-        try
-        {
-            in = new FileInputStream(file);
-            in.read(filecontent);
-            read = new String(filecontent, "UTF-8");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-
-            if (in != null)
-            {
-                in.close();
-            }
-        }
-        System.out.println(read);
-        JSONObject json = JSON.parseObject(read);
-
-        if (id != null && pwd != null && json.containsKey(id)
-                && pwd.compareTo(json.getString(id)) == 0)
+        if (user != null && user.getPassword().compareTo(pwd) == 0)
         {
             request.getRequestDispatcher("./html/home.html")
                     .forward(request, response);

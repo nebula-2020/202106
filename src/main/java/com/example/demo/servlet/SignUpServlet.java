@@ -2,7 +2,7 @@ package com.example.demo.servlet;
 
 import java.io.*;
 
-import com.alibaba.fastjson.JSONObject;
+import com.example.demo.dao.UserDao;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -30,8 +30,6 @@ public class SignUpServlet extends HttpServlet
         super.doPost(req, resp);
     }
 
-    private static String path = "./jsonDB.json";
-
     @Override
     protected void
             doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,57 +38,21 @@ public class SignUpServlet extends HttpServlet
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
         response.setContentType("text/html; charset=UTF-8");
-        String id = (String)request.getParameter("id");
+        String name = (String)request.getParameter("name");
         String pwd = (String)request.getParameter("pwd");
-        File file = new File(path);
+        UserDao ud = new UserDao();
+        long id = ud.addUser(name, pwd);
 
-        if (!file.exists())
+        if (id > 0)
         {
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-        }
-        Long filelength = file.length();
-        byte[] filecontent = new byte[filelength.intValue()];
-        String read = "{}";
-        FileInputStream in = null;
-
-        try
-        {
-            in = new FileInputStream(file);
-            in.read(filecontent);
-            read = new String(filecontent, "UTF-8");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-
-            if (in != null)
-            {
-                in.close();
-            }
-        }
-        System.out.println(read);
-        JSONObject json = JSONObject.parseObject(read);
-        if(json==null) {
-            json=new JSONObject();
-        }
-        if (!json.containsKey(id))
-        {
-            json.put(id, pwd);
-            FileWriter fw = new FileWriter(file, false);
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(json.toJSONString());
-            bw.flush();
-            bw.close();
-            fw.close();
-            request.getRequestDispatcher("/html/home.html")
-                    .forward(request, response);
+            response.getWriter().write(
+                    "<h1>账号为： " + id
+                            + "<h1><a href=\"./html/home.html\">转到主页</a>"
+            );
         }
         else
         {
+            response.getWriter().write("<h1>:(<h1><h2>注册失败</h2>");
         }
     }
 }
