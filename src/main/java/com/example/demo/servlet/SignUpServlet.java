@@ -1,33 +1,40 @@
 package com.example.demo.servlet;
 
 import java.io.*;
-import java.io.IOException;
-import com.alibaba.fastjson.JSON;
+
 import com.alibaba.fastjson.JSONObject;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-public class SignInServlet extends HttpServlet
+public class SignUpServlet extends HttpServlet
 {
-    private static final long serialVersionUID = 1L;
 
-    /**
-     * Default constructor.
-     */
-    public SignInServlet()
+    public SignUpServlet()
     {
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException
+    {
+        // TODO Auto-generated method stub
+        super.doPost(req, resp);
+    }
+
     private static String path = "./jsonDB.json";
 
-    /**
-     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-     * response)
-     */
+    @Override
     protected void
-            doGet(HttpServletRequest request, HttpServletResponse response)
+            doPost(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException
     {
         request.setCharacterEncoding("utf-8");
@@ -66,30 +73,24 @@ public class SignInServlet extends HttpServlet
             }
         }
         System.out.println(read);
-        JSONObject json = JSON.parseObject(read);
-
-        if (id != null && pwd != null && json.containsKey(id)
-                && pwd.compareTo(json.getString(id)) == 0)
+        JSONObject json = JSONObject.parseObject(read);
+        if(json==null) {
+            json=new JSONObject();
+        }
+        if (!json.containsKey(id))
         {
-            request.getRequestDispatcher("./html/home.html")
+            json.put(id, pwd);
+            FileWriter fw = new FileWriter(file, false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(json.toJSONString());
+            bw.flush();
+            bw.close();
+            fw.close();
+            request.getRequestDispatcher("/html/home.html")
                     .forward(request, response);
         }
         else
         {
-            response.getWriter().write("<h1>:(<h1><h2>用户名或密码错误</h2>");
         }
     }
-
-    /**
-     * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-     * response)
-     */
-    protected void
-            doPost(HttpServletRequest request, HttpServletResponse response)
-                    throws ServletException, IOException
-    {
-        // TODO Auto-generated method stub
-        doGet(request, response);
-    }
-
 }
