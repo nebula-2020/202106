@@ -35,9 +35,6 @@ public class SignUpServlet extends HttpServlet
             doPost(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException
     {
-        request.setCharacterEncoding("utf-8");
-        response.setCharacterEncoding("utf-8");
-        response.setContentType("text/html; charset=UTF-8");
         String name = (String)request.getParameter("name");
         String pwd = (String)request.getParameter("pwd");
         UserDao ud = new UserDao();
