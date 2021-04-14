@@ -28,3 +28,4 @@ build/
 webapp/WEB-INF/lib/
 .settings/
 .mvn/
+.gitignore
