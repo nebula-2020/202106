@@ -18,6 +18,8 @@
 	<classpathentry exported="true" kind="lib" path="C:/Users/Administrator/.m2/repository/org/apache/commons/commons-lang3/3.11/commons-lang3-3.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/Program Files/Apache Software Foundation/apache-tomcat-10.0.4/lib/servlet-api.jar"/>
 	<classpathentry exported="true" kind="lib" path="D:/Program Files/Apache Software Foundation/apache-tomcat-10.0.4/lib/jsp-api.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/Program Files/Apache Software Foundation/jstl-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/Program Files/Apache Software Foundation/taglibs-standard-jstlel-1.2.5.jar"/>
     <classpathentry exported="true" kind="lib" path="C:/Users/Administrator/.m2/repository/mysql/mysql-connector-java/8.0.23/mysql-connector-java-8.0.23.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

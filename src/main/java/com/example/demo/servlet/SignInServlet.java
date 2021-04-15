@@ -2,6 +2,7 @@ package com.example.demo.servlet;
 
 import java.io.IOException;
 import com.example.demo.bean.UserBean;
+import com.example.demo.constants.Const;
 import com.example.demo.dao.UserDao;
 
 import jakarta.servlet.ServletException;
@@ -34,7 +35,11 @@ public class SignInServlet extends HttpServlet
 
         if (user != null && user.getPassword().compareTo(pwd) == 0)
         {
-            request.getRequestDispatcher("./html/home.html")
+            Cookie cookie =
+                    new Cookie(Const.COOKIE_ID, Long.valueOf(id).toString());
+            cookie.setMaxAge(7 * 24 * 60 * 60);
+            response.addCookie(cookie);
+            request.getRequestDispatcher("./html/home.jsp")
                     .forward(request, response);
         }
         else

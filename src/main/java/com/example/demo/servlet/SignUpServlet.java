@@ -44,7 +44,7 @@ public class SignUpServlet extends HttpServlet
         {
             response.getWriter().write(
                     "<h1>账号为： " + id
-                            + "<h1><a href=\"./html/home.html\">转到主页</a>"
+                            + "<h1><a href=\"./html/home.jsp\">转到主页</a>"
             );
         }
         else
