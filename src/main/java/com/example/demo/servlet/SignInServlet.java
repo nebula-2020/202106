@@ -37,7 +37,7 @@ public class SignInServlet extends HttpServlet
         {
             Cookie cookie =
                     new Cookie(Const.COOKIE_ID, Long.valueOf(id).toString());
-            cookie.setMaxAge(7 * 24 * 60 * 60);
+            cookie.setMaxAge(Const.COOKIE_TIME);
             response.addCookie(cookie);
             request.getRequestDispatcher("./html/home.jsp")
                     .forward(request, response);

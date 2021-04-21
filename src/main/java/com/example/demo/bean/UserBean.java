@@ -1,7 +1,7 @@
 package com.example.demo.bean;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 // import com.example.demo.annotation.Table;
 
@@ -20,7 +20,9 @@ public class UserBean implements Serializable
     @NonNull
     private String name;
     @NonNull
-    private Timestamp createTime;
+    private String phone;
+    @NonNull
+    private LocalDateTime createTime;
     @NonNull
     private String password;
     private boolean del;

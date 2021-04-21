@@ -1,76 +1,88 @@
 package com.example.demo.dao;
 
-import java.sql.*;
+import java.util.*;
 
-import com.example.demo.bean.UserBean;
-import com.example.demo.util.DBUtil;
+import com.alibaba.fastjson.JSON;
+import com.example.demo.bean.*;
+import com.example.demo.util.*;
+import java.time.LocalDateTime;
 
 public class UserDao
 {
-    public long addUser(String name, String password)
+    private UserBean getBean(Iterator<Map<String, Object>> res)
     {
-        Connection con = DBUtil.Connect();
-        PreparedStatement pstm = null;
-        ResultSet res = null;
-        long ret = 0;
+        UserBean ret = null;
+
+        if (res.hasNext())
+        {
+            Map<String, Object> rs = res.next();
+            System.out.println("DBResult:" + JSON.toJSON(rs));
+            long resId = (long)rs.get("id");
+            String n = (String)rs.get("name");
+            String pwd = (String)rs.get("password");
+            String phone = (String)rs.get("phone");
+            LocalDateTime createTime = (LocalDateTime)rs.get("create_time");
+            boolean del = (Boolean)rs.get("del");
+            ret = new UserBean(resId, n, phone, createTime, pwd, del);
+        }
+        System.out.print(JSON.toJSONString(ret));
+        return ret;
+    }
+
+    public UserBean addUser(String name, String phone, String password)
+    {
+        UserBean ret = null;
 
         try
         {
-            pstm = con.prepareStatement("insert user set name=?, password=?;");
-            pstm.setString(1, name);
-            pstm.setString(2, password);
-            ret = pstm.executeUpdate();
+            int lines = DBUtil.executeUpdate(
+                    "insert user set phone=?, name=?, password=?;", phone, name,
+                    password
+            );
 
-            if (ret > 0)
+            if (lines > 0)
             {
-                res = pstm.getGeneratedKeys();
-                res.next();
-                ret = res.getLong("id");
+                ret = getUser(phone);
             }
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
             e.printStackTrace();
         }
-        finally
+        return ret;
+    }
+
+    public UserBean getUser(String phone)
+    {
+        UserBean ret = null;
+
+        try
         {
-            DBUtil.CloseDatabase(con, pstm, null);
+            Iterator<Map<String, Object>> res = DBUtil.executeQuery(
+                    "select * from `user` where `phone`=? limit 1;", phone
+            );
+            ret = getBean(res);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
         return ret;
     }
 
     public UserBean getUser(long id)
     {
-        Connection con = DBUtil.Connect();
-        PreparedStatement pstm = null;
-        ResultSet rs = null;
         UserBean ret = null;
 
         try
         {
-            pstm = con
-                    .prepareStatement("select * from user where id=? limit 1;");
-            pstm.setLong(1, id);
-            rs = pstm.executeQuery();
-
-            if (rs.next())
-            {
-                long resId = rs.getLong("id");
-                String name = rs.getString("name");
-                String password = rs.getString("password");
-                Timestamp createTime = rs.getTimestamp("create_time");
-                boolean del = rs.getBoolean("del");
-                ret = new UserBean(resId, name, createTime, password, del);
-            }
-            System.out.println("DBResult:" + rs);
+            Iterator<Map<String, Object>> res = DBUtil
+                    .executeQuery("select * from user where id=? limit 1;", id);
+            ret = getBean(res);
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
             e.printStackTrace();
-        }
-        finally
-        {
-            DBUtil.CloseDatabase(con, pstm, rs);
         }
         return ret;
     }

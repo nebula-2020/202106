@@ -1,35 +1,44 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+<head lang="en">
     <meta name="viewport"
         content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,initial-scale=1" />
     <meta charset="UTF-8">
-    <title>Document</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/def.css">
+    <title>Index</title>
     <style>
-        .btn {
-            background-color: #08f;
-            color: #fff;
-            margin: 10px;
-            cursor: pointer;
+        .form {
             display: inline-block;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 25px;
         }
 
-        .input {
-            border: #08f solid 1px;
-            line-height: 2em;
-            min-height: 2em;
+        .jump {
+            font-size: 0.5rem;
+            text-align: left;
         }
     </style>
 </head>
 
 <body>
-    <form action="../signIn" method="post">
-        <input id='id' name='id' placeholder='账号' />
-        <input id='pwd' name='pwd' type='password' placeholder='密码' />
-        <button type="submit" class="btn">Login</button>
-    </form>
-    <a href="./signUp.jsp">signUp</a>
+    <div class="form">
+        <form action="../signIn" method="post">
+            <input name='id' type="text" placeholder='账号'>
+            <input name='pwd' type="password" placeholder='密码'>
+            <button type="submit">登录</button>
+            <a class="jump" href="./signUp.html">转到注册</a>
+        </form>
+    </div>
 </body>
+<script>
+</script>
 
 </html>

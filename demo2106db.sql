@@ -13,6 +13,8 @@
 
  Date: 2021/03/22 12:03:00
 */
+DROP DATABASE IF EXISTS demo2106db;
+
 CREATE DATABASE IF NOT EXISTS demo2106db DEFAULT CHARACTER SET = utf8mb4 DEFAULT COLLATE = utf8mb4_0900_ai_ci;
 
 USE demo2106db;
@@ -27,9 +29,11 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'user',
+  `phone` char(15) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL,
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
   `password` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-  `del` bit(1) NOT NULL DEFAULT b'0',
+  `del` tinyint(1) NOT NULL DEFAULT 0,
+  UNIQUE KEY userunique(`phone`),
   PRIMARY KEY (`id`)
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 

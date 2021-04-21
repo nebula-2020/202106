@@ -93,11 +93,11 @@ public final class DBUtil
     }
 
     public static Iterator<Map<String, Object>>
-            execUpdate(String sql, Object... objs)
+            executeQuery(String sql, Object... objs)
                     throws IllegalArgumentException
     {
 
-        if (StringUtils.isAllBlank(sql) || objs == null)
+        if (StringUtils.isBlank(sql) || objs == null)
         {
             throw new NullPointerException();
         }
@@ -118,22 +118,71 @@ public final class DBUtil
 
             for (int i = 1; i <= paramCount; i++)
             {
-                pstm.setObject(i, objs[i]);
+                pstm.setObject(i, objs[i - 1]);
             }
-            pstm.execute();
-            rs = pstm.getResultSet();
-            ResultSetMetaData meta = rs.getMetaData();
 
-            while (rs.next())
+            rs = pstm.executeQuery();
+
+            if (rs != null)
             {
-                HashMap<String, Object> map = new HashMap<>();
+                ResultSetMetaData meta = rs.getMetaData();
+                int colCount = meta.getColumnCount();
 
-                for (int i = 0; i < paramCount; i++)
+                while (rs.next())
                 {
-                    map.put(meta.getColumnName(i), rs.getObject(i));
+                    HashMap<String, Object> map = new HashMap<>();
+
+                    for (int i = 1; i <= colCount; i++)
+                    {
+                        map.put(meta.getColumnName(i), rs.getObject(i));
+                    }
+                    ret.add(map);
                 }
-                ret.add(map);
             }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            DBUtil.CloseDatabase(con, pstm, rs);
+        }
+        return ret.iterator();
+    }
+
+    public static int executeUpdate(String sql, Object... objs)
+            throws IllegalArgumentException
+    {
+
+        if (StringUtils.isBlank(sql) || objs == null)
+        {
+            throw new NullPointerException();
+        }
+        int paramCount = StringUtils.countMatches(sql, DBUtil.QUEST);
+
+        if (objs.length != paramCount)
+        {
+            throw new IllegalArgumentException();
+        }
+        Connection con = DBUtil.Connect();
+        PreparedStatement pstm = null;
+        int ret = 0;
+
+        try
+        {
+            pstm = con.prepareStatement(sql);
+
+            for (int i = 1; i <= paramCount; i++)
+            {
+                pstm.setObject(i, objs[i - 1]);
+            }
+            ret = pstm.executeUpdate();
+            System.out.println(ret);
         }
         catch (SQLException e)
         {
@@ -147,6 +196,6 @@ public final class DBUtil
         {
             DBUtil.CloseDatabase(con, pstm, null);
         }
-        return ret.iterator();
+        return ret;
     }
 }

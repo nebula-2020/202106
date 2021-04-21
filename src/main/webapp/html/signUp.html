@@ -1,35 +1,45 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+<head lang="en">
     <meta name="viewport"
         content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,initial-scale=1" />
     <meta charset="UTF-8">
-    <title>Document</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../css/def.css">
+    <title>Index</title>
     <style>
-        .btn {
-            background-color: #08f;
-            color: #fff;
-            margin: 10px;
-            cursor: pointer;
+        .form {
             display: inline-block;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 25px;
         }
 
-        .input {
-            border: #08f solid 1px;
-            line-height: 2em;
-            min-height: 2em;
+        .jump {
+            font-size: 0.5rem;
+            text-align: left;
         }
     </style>
 </head>
 
 <body>
-    <form action="../signUp" method="post">
-        <input id='id' name='name' placeholder='昵称' />
-        <input id='pwd' name='pwd' type='password' placeholder='密码' />
-        <button type="submit" class="btn">Reg</button>
-    </form>
-    <a href="./signIn.html">signIn</a>
+    <div class="form">
+        <form action="../signUp" method="post">
+            <input name='name' type="text" placeholder='昵称'>
+            <input name='phone' type="text" placeholder='手机号'>
+            <input name='pwd' type="password" placeholder='密码'>
+            <button type="submit">注册</button>
+            <a class="jump" href="./signIn.html">转到登录</a>
+        </form>
+    </div>
 </body>
+<script>
+</script>
 
 </html>
