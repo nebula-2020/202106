@@ -39,7 +39,7 @@ public class SignInServlet extends HttpServlet
                     new Cookie(Const.COOKIE_ID, Long.valueOf(id).toString());
             cookie.setMaxAge(Const.COOKIE_TIME);
             response.addCookie(cookie);
-            request.getRequestDispatcher("./html/home.jsp")
+            request.getRequestDispatcher("./html/home.html")
                     .forward(request, response);
         }
         else

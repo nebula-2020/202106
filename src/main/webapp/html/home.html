@@ -4,19 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Insert title here</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        .main {
-            width: 80%;
-            min-height: 80%;
-            min-width: 800px;
-            margin-left: 50%;
-            transform: translate(-50%, 0);
-        }
     </style>
 </head>
 
 <body>
+    <a href="javascript:refresh()">REFRESH</a>
     <div class="main">
         <ul id="users">
 
@@ -26,8 +20,38 @@
         </ul>
     </div>
 </body>
+<script src="../js/main.js"></script>
 <script>
+    var ul = document.getElementById('users');
+    function refresh() {
 
+        var request = new XMLHttpRequest();
+        request.open('GET', './getUsers?count=10&start=1&step=1');
+        request.onreadystatechange = function () {
+            if (request.status == 200 && request.readyState == 4) {
+                var td1 = document.getElementById("y1");
+                var td2 = document.getElementById("y2");
+                console.log(request.responseText)
+                var response = JSON.parse(request.responseText);
+                var keys = Object.keys(response);
+                for (var i = 0, len = keys.length; i < len; i++) {
+                    let li = document.createElement('li');
+                    let a = document.createElement('a');
+                    a.innerHTML = keys[i];
+                    a.href = '../me?id=' + keys[i];
+                    let text = document.createElement('span');
+                    text.innerHTML = response[keys[i]];
+                    li.appendChild(a);
+                    li.appendChild(text);
+                    ul.appendChild(li);
+                }
+            }
+        }
+        request.send(null);
+    }
+    window.onload = function () {
+        refresh();
+    }
 </script>
 
 </html>
