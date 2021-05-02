@@ -14,14 +14,12 @@ import org.apache.commons.lang3.StringUtils;
 
 public class UserDao
 {
-    private UserBean getBean(Iterator<Map<String, Object>> res)
+    private UserBean getBean(Map<String, Object> rs)
     {
         UserBean ret = null;
 
-        if (res.hasNext())
+        try
         {
-            Map<String, Object> rs = res.next();
-            System.out.println("DBResult:" + JSON.toJSON(rs));
             long resId = (long)rs.get("id");
             String n = (String)rs.get("name");
             String pwd = (String)rs.get("password");
@@ -30,7 +28,10 @@ public class UserDao
             boolean del = (Boolean)rs.get("del");
             ret = new UserBean(resId, n, phone, createTime, pwd, del);
         }
-        System.out.print(JSON.toJSONString(ret));
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
         return ret;
     }
 
@@ -53,20 +54,18 @@ public class UserDao
         return ret;
     }
 
-    public UserBean addUser(String name, String phone, String password)
+    public UserBean add(String name, String phone, String password)
     {
         UserBean ret = null;
 
         try
         {
-            int lines = DBUtil.executeUpdate(
-                    "insert user set phone=?, name=?, password=?;", phone, name,
-                    password
-            );
+            String sql = "insert user set phone=?, name=?, password=?;";
+            int lines = DBUtil.executeUpdate(sql, phone, name, password);
 
             if (lines > 0)
             {
-                ret = getUser(phone);
+                ret = get(phone);
             }
         }
         catch (Exception e)
@@ -76,16 +75,19 @@ public class UserDao
         return ret;
     }
 
-    public UserBean getUser(String phone)
+    public UserBean get(String phone)
     {
         UserBean ret = null;
 
         try
         {
-            Iterator<Map<String, Object>> res = DBUtil.executeQuery(
-                    "select * from `user` where `phone`=? limit 1;", phone
-            );
-            ret = getBean(res);
+            String sql = "select * from `user` where `phone`=? limit 1;";
+            Iterator<Map<String, Object>> res = DBUtil.executeQuery(sql, phone);
+
+            if (res.hasNext())
+            {
+                ret = getBean(res.next());
+            }
         }
         catch (Exception e)
         {
@@ -94,32 +96,41 @@ public class UserDao
         return ret;
     }
 
-    public UserBean getUser(long id)
+    public UserBean get(long id)
     {
         UserBean ret = null;
 
-        try
+        if (id > 0)
         {
-            Iterator<Map<String, Object>> res = DBUtil
-                    .executeQuery("select * from user where id=? limit 1;", id);
-            ret = getBean(res);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+
+            try
+            {
+                String sql = "select * from user where id=? limit 1;";
+                Iterator<Map<String, Object>> res =
+                        DBUtil.executeQuery(sql, id);
+
+                if (res.hasNext())
+                {
+                    ret = getBean(res.next());
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
         return ret;
     }
 
-    public List<UserBean> getUser(long... ids)
+    public List<UserBean> get(long... ids)
     {
         List<UserBean> ret = null;
 
         try
         {
+            String sql = "select * from user where id in (?);";
             String str = StringUtils.join(ids, ',');
-            Iterator<Map<String, Object>> res = DBUtil
-                    .executeQuery("select * from user where id in (?);", str);
+            Iterator<Map<String, Object>> res = DBUtil.executeQuery(sql, str);
             ret = getBeans(res);
         }
         catch (Exception e)

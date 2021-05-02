@@ -40,7 +40,7 @@ public class SignUpServlet extends HttpServlet
         String phone = (String)request.getParameter("phone");
         String pwd = (String)request.getParameter("pwd");
         UserDao ud = new UserDao();
-        UserBean res = ud.addUser(name, phone, pwd);
+        UserBean res = ud.add(name, phone, pwd);
 
         if (res != null)
         {

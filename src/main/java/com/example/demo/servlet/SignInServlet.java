@@ -31,7 +31,7 @@ public class SignInServlet extends HttpServlet
         long id = Long.parseLong(request.getParameter("id"));
         String pwd = (String)request.getParameter("pwd");
         UserDao ud = new UserDao();
-        UserBean user = ud.getUser(id);
+        UserBean user = ud.get(id);
 
         if (user != null && user.getPassword().compareTo(pwd) == 0)
         {

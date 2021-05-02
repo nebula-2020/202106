@@ -36,7 +36,7 @@ public class GetUserServlet extends HttpServlet
             reqs[i] = i + start;
         }
         UserDao ud = new UserDao();
-        List<UserBean> users = ud.getUser(reqs);
+        List<UserBean> users = ud.get(reqs);
 
         if (users != null && users.size() > 0)
         {
@@ -62,7 +62,6 @@ public class GetUserServlet extends HttpServlet
             doPost(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException
     {
-        // TODO Auto-generated method stub
         doGet(request, response);
     }
 }
