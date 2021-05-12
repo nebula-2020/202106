@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="./css/def.css">
+    <script src="./js/main.js"></script>
     <title>Index</title>
     <style>
         body {
@@ -13,6 +14,7 @@
         }
 
         #title {
+            text-align: right;
             height: 3rem;
             margin: 0 -30px;
             padding: 1.5rem 30px 0 30px;
@@ -59,12 +61,45 @@
     <div id="title">
         <a href="./html/signIn.html">注册/登录</a>
     </div>
-    <div>
-        热门用户
-        <ul>
-
+    <div class="page">
+        <h2>热门用户</h2>
+        <hr>
+        <a href="javascript:refresh()">REFRESH</a>
+        <ul id="userList">
         </ul>
     </div>
 </body>
+<script>
+    var time = new Date().getTime();
+    function refresh() {
+        ajax({
+            type: 'GET',
+            url: './getUsers?count=10&start=1&step=1&time=' + time,
+            data: null,
+            success: function () {
+                var ul = document.getElementById('userList');
+                var td1 = document.getElementById("y1");
+                var td2 = document.getElementById("y2");
+                console.log(request.responseText)
+                var response = JSON.parse(request.responseText);
+                var keys = Object.keys(response);
+                for (var i = 0, len = keys.length; i < len; i++) {
+                    let li = document.createElement('li');
+                    let a = document.createElement('a');
+                    a.innerHTML = keys[i];
+                    a.href = '../me?id=' + keys[i];
+                    let text = document.createElement('span');
+                    text.innerHTML = response[keys[i]];
+                    li.appendChild(a);
+                    li.appendChild(text);
+                    ul.appendChild(li);
+                }
+            }
+        })
+    }
+    window.onload = function () {
+        refresh();
+    }
+</script>
 
 </html>

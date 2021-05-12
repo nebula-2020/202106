@@ -4,6 +4,9 @@ import java.io.IOException;
 
 import jakarta.servlet.*;
 
+/**
+ * 过滤器于服务器关闭时销毁，过滤器不会拦截jsp页面
+ */
 public class EncodingFilter implements Filter
 {
 
