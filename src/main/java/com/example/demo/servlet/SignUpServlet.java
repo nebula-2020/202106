@@ -2,8 +2,7 @@ package com.example.demo.servlet;
 
 import java.io.*;
 
-import com.example.demo.bean.UserBean;
-import com.example.demo.dao.UserDao;
+import com.example.demo.service.UserService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -13,6 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SignUpServlet extends HttpServlet
 {
 
+    private static final long serialVersionUID = 1L;
+    private UserService service = new UserService();
+
     public SignUpServlet()
     {
         // TODO Auto-generated constructor stub
@@ -21,7 +23,6 @@ public class SignUpServlet extends HttpServlet
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -39,24 +40,14 @@ public class SignUpServlet extends HttpServlet
         String name = (String)request.getParameter("name");
         String phone = (String)request.getParameter("phone");
         String pwd = (String)request.getParameter("pwd");
-        UserDao ud = new UserDao();
-        UserBean res = ud.add(name, phone, pwd);
+        long id = service.SignUp(name, phone, pwd);
 
-        if (res != null)
+        if (id > 0)
         {
-            long id = res.getId();
-
-            if (id > 0)
-            {
-                response.getWriter().write(
-                        "<h1>账号为： " + id
-                                + "<h1><a href=\"./html/home.html\">转到主页</a>"
-                );
-            }
-            else
-            {
-                response.getWriter().write("<h1>:(<h1><h2>注册失败</h2>");
-            }
+            response.getWriter().write(
+                    "<h1>账号为： " + id
+                            + "<h1><a href=\"./html/home.html\">转到主页</a>"
+            );
         }
         else
         {

@@ -2,6 +2,7 @@ package com.example.demo.dao;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,7 @@ import com.example.demo.util.DBUtil;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class UserDao
+public class UserDao extends Dao<UserBean, Long>
 {
     private UserBean getBean(Map<String, Object> rs)
     {
@@ -96,11 +97,30 @@ public class UserDao
         return ret;
     }
 
-    public UserBean get(long id)
+    public List<UserBean> get(long... ids)
+    {
+        List<UserBean> ret = null;
+
+        try
+        {
+            String sql = "select * from user where id in (?);";
+            String str = StringUtils.join(ids, ',');
+            Iterator<Map<String, Object>> res = DBUtil.executeQuery(sql, str);
+            ret = getBeans(res);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
+    @Override
+    public UserBean get(Long id)
     {
         UserBean ret = null;
 
-        if (id > 0)
+        if (id != null && id > 0)
         {
 
             try
@@ -122,21 +142,52 @@ public class UserDao
         return ret;
     }
 
-    public List<UserBean> get(long... ids)
+    @Override
+    public Iterator<UserBean> get(Collection<Long> primaryKeys)
     {
-        List<UserBean> ret = null;
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-        try
-        {
-            String sql = "select * from user where id in (?);";
-            String str = StringUtils.join(ids, ',');
-            Iterator<Map<String, Object>> res = DBUtil.executeQuery(sql, str);
-            ret = getBeans(res);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return ret;
+    @Override
+    public UserBean add(UserBean obj)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Iterator<UserBean> add(Collection<UserBean> objs)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public UserBean update(Long primaryKey, UserBean obj)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Iterator<UserBean> update(Map<Long, UserBean> map)
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public int delete(Long primaryKey)
+    {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
+    @Override
+    public int delete(Collection<Long> primaryKeys)
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }
