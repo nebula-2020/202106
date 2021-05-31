@@ -1,56 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app 
-	xmlns="http://JAVA.sun.com/xml/ns/javaee" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-	version="2.5">
-
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
+    <display-name>tp20210517</display-name>
     <servlet>
-        <servlet-name>signInServlet</servlet-name>
-        <servlet-class>com.example.demo.servlet.SignInServlet</servlet-class>
+        <servlet-name>empServlet</servlet-name>
+        <servlet-class>com.example.demo.servlet.EmpServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>signInServlet</servlet-name>
-        <url-pattern>/signIn</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>signUpServlet</servlet-name>
-        <servlet-class>com.example.demo.servlet.SignUpServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>signUpServlet</servlet-name>
-        <url-pattern>/signUp</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>getUserServlet</servlet-name>
-        <servlet-class>com.example.demo.servlet.GetUserServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>getUserServlet</servlet-name>
-        <url-pattern>/getUsers</url-pattern>
+        <servlet-name>empServlet</servlet-name>
+        <url-pattern>/emp</url-pattern>
     </servlet-mapping>
 
     <filter>
         <filter-name>encodingFilter</filter-name>
         <filter-class>com.example.demo.filter.EncodingFilter</filter-class>
+        <init-param>
+            <param-name>CharaterEncoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <filter>
-        <filter-name>securityFilter</filter-name>
-        <filter-class>com.example.demo.filter.SecurityFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>securityFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-   <welcome-file-list>
+    <welcome-file-list>
         <welcome-file>index.html</welcome-file>
-   </welcome-file-list>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>default.html</welcome-file>
+        <welcome-file>default.htm</welcome-file>
+        <welcome-file>default.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>

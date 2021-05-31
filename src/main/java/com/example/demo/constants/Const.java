@@ -5,9 +5,10 @@ public abstract class Const
     public static final String COOKIE_ID = "id";
     public static final String COOKIE_ICON = "icon";
     public static final int COOKIE_TIME = 60 * 60 * 24 * 7;
-    public static final String HOST_URL = "http://localhost:8080";
+    public static final String HOST_URL = "http://localhost:8080/tp20210517";
     public static final String[] STATICS = {
-            "js", "css", "html", "images", "icons"
+            "js/", "css/", "html/", "images/", "icons/", "index.html", "signUp",
+            "signIn"
     };
     public static final String SLASH = "/";
 }

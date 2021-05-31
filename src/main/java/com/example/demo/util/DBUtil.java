@@ -3,9 +3,11 @@ package com.example.demo.util;
 import java.sql.*;
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+
 import org.apache.commons.lang3.StringUtils;
 
-public final class DBUtil
+public abstract class DBUtil
 {
     private static final String USER = "root";
     private static final String PASSWORD = "root";
@@ -92,7 +94,7 @@ public final class DBUtil
         }
     }
 
-    public static Iterator<Map<String, Object>>
+    public static ArrayList<Map<String, Object>>
             executeQuery(String sql, Object... objs)
                     throws IllegalArgumentException
     {
@@ -136,6 +138,7 @@ public final class DBUtil
                     {
                         map.put(meta.getColumnName(i), rs.getObject(i));
                     }
+                    System.out.println(JSON.toJSONString(map));
                     ret.add(map);
                 }
             }
@@ -152,7 +155,8 @@ public final class DBUtil
         {
             DBUtil.CloseDatabase(con, pstm, rs);
         }
-        return ret.iterator();
+        System.out.println(JSON.toJSONString(ret));
+        return ret;
     }
 
     public static int executeUpdate(String sql, Object... objs)
