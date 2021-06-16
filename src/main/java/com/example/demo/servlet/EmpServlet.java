@@ -1,12 +1,13 @@
 package com.example.demo.servlet;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.*;
 import com.example.demo.bean.EmpBean;
 import com.example.demo.service.EmpService;
+
+import org.apache.commons.lang3.StringUtils;
 
 // import org.apache.commons.lang3.StringUtils;
 
@@ -15,7 +16,7 @@ import jakarta.servlet.http.*;
 
 public class EmpServlet extends HttpServlet
 {
-
+    private static final String SUCCEED = "succeed";
     private static final long serialVersionUID = 1L;
     private EmpService service = new EmpService();
 
@@ -31,11 +32,35 @@ public class EmpServlet extends HttpServlet
             doDelete(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException
     {
-        int no = Integer.valueOf(request.getParameter("empno"));
-        boolean res = service.delete(no);
-        JSONObject ret = new JSONObject();
-        ret.put("effect", Integer.valueOf(res ? 1 : 0));
-        response.getWriter().write(ret.toString());
+        System.out.println("DO DELETE...");
+        String jsonStr = request.getParameter("empnos");
+        int res = 0;
+        JSONArray ids = JSON.parseArray(jsonStr);
+        System.out.println(jsonStr);
+        Enumeration<String> strs = request.getAttributeNames();
+
+        while (strs.hasMoreElements())
+        {
+            System.out.println(strs.nextElement());
+        }
+
+        if (ids != null)
+        {
+            int len = ids.size();
+
+            for (int i = 0; i < len; i++)
+            {
+                res += service.delete(ids.getInteger(i)) ? 1 : 0;
+            }
+            JSONObject ret = new JSONObject();
+            ret.put("effect", res);
+            response.setContentType("application/json; charset=utf-8");
+            response.getWriter().write(ret.toString());
+        }
+        else
+        {
+            response.setStatus(400);
+        }
     }
 
     /**
@@ -46,6 +71,7 @@ public class EmpServlet extends HttpServlet
             doPut(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException
     {
+        System.out.println("DO PUT...");
         JSONObject json = getJSON(request);
         EmpBean bean = j2b(json);
         bean = service.update(bean);
@@ -57,6 +83,7 @@ public class EmpServlet extends HttpServlet
         }
         else
         {
+            response.setContentType("application/json; charset=utf-8");
             response.getWriter().write(new JSONObject().toString());
         }
     }
@@ -70,11 +97,28 @@ public class EmpServlet extends HttpServlet
             doGet(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException
     {
-        int start = Integer.valueOf(request.getParameter("start"));
-        int size = Integer.valueOf(request.getParameter("size"));
-        List<EmpBean> beans = service.gets(start, size);
-        System.out.println(beans);
-        String res = JSONObject.toJSONString(beans);
+        System.out.println("DO GET...");
+        int start = Integer.valueOf(request.getParameter("page"));
+        int size = Integer.valueOf(request.getParameter("limit"));
+        List<EmpBean> beans = new LinkedList<>();
+        String name = null;
+
+        if (request.getParameterMap().containsKey("name"))
+        {
+            name = request.getParameter("name");
+        }
+
+        if (name != null && StringUtils.isNotBlank(name))
+        {
+            System.out.println(name);
+            beans = service.gets(start, size, name);
+        }
+        else
+        {
+            beans = service.gets(start, size);
+        }
+        JSONObject res = packOfGet(0, SUCCEED, beans.size(), beans);
+        response.setContentType("application/json; charset=utf-8");
         response.getWriter().write(res.toString());
     }
 
@@ -86,6 +130,7 @@ public class EmpServlet extends HttpServlet
             doPost(HttpServletRequest request, HttpServletResponse response)
                     throws ServletException, IOException
     {
+        System.out.println("DO POST...");
         JSONObject json = getJSON(request);
         EmpBean bean = j2b(json);
         bean = service.add(bean);
@@ -97,6 +142,7 @@ public class EmpServlet extends HttpServlet
         }
         else
         {
+            response.setContentType("application/json; charset=utf-8");
             response.getWriter().write(new JSONObject().toString());
         }
     }
@@ -111,7 +157,18 @@ public class EmpServlet extends HttpServlet
             json += str;
         }
         br.close();
+        System.out.println(json);
         JSONObject ret = JSON.parseObject(json);
+        return ret;
+    }
+
+    private JSONObject packOfGet(int code, String msg, int count, Object data)
+    {
+        JSONObject ret = new JSONObject();
+        ret.put("code", code);
+        ret.put("msg", msg);
+        ret.put("count", count);
+        ret.put("data", data);
         return ret;
     }
 
@@ -124,7 +181,7 @@ public class EmpServlet extends HttpServlet
             int empno = json.getIntValue("empno");
             String ename = json.getString("ename");
             int mgr = json.getIntValue("mgr");
-            int hiredate = json.getIntValue("hiredate");
+            long hiredate = json.getLongValue("hiredate");
             float sal = json.getFloatValue("sal");
             float comm = json.getFloatValue("comm");
             int deptno = json.getIntValue("deptno");

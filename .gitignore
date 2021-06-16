@@ -16,3 +16,4 @@ build/
 webapp/WEB-INF/lib/
 .settings/
 .mvn/
+src/main/webapp/layui/

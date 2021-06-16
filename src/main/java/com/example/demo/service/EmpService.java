@@ -27,6 +27,21 @@ public class EmpService
         return ret;
     }
 
+    public List<EmpBean> gets(int start, int count, String subName)
+    {
+        List<EmpBean> ret = new LinkedList<EmpBean>();
+
+        try
+        {
+            ret = ud.get(start, count, subName);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return ret;
+    }
+
     public EmpBean get(int id)
     {
         EmpBean ret = null;

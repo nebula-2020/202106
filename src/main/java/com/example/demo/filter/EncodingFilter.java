@@ -17,7 +17,7 @@ public class EncodingFilter implements Filter
     {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
-        response.setContentType("application/json; charset=utf-8");
+        System.out.println("EncodingFilter...");
         chain.doFilter(request, response);
     }
 }

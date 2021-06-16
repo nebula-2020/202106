@@ -17,8 +17,8 @@ public class EmpBean implements Serializable
     private String ename;
     @NonNull
     private String job;
-    private int mgr;
-    private int hiredate;
+    private Integer mgr;
+    private long hiredate;
     private float sal;
     private float comm;
     private int deptno;

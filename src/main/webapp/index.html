@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>layui 调试预览</title>
+    <link rel="stylesheet" href="./layui/css/layui.css?t=1621460603938" media="all">
+    <style>
+        body {
+            margin: 10px;
+            overflow: hidden;
+        }
+
+        .demo-carousel {
+            height: 200px;
+            line-height: 200px;
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            min-width: unset;
+        }
+
+        div[lay-event="update"],
+        div[lay-event="delete"],
+        div[lay-event="LAYTABLE_COLS"],
+        div[lay-event="LAYTABLE_EXPORT"],
+        div[lay-event="LAYTABLE_PRINT"] {
+            display: none
+        }
+
+        #mask {
+            display: none;
+        }
+
+        .blur #mask {
+            display: inline-block !important;
+            background-color: #4442;
+            position: fixed;
+            width: 200vw;
+            height: 200vh;
+            left: -50vw;
+            top: -50vh;
+            z-index: 2147483647;
+        }
+
+        #win {
+            filter: blur(0px);
+            transition: filter linear 0.5s;
+        }
+
+        .blur #win {
+            filter: blur(30px);
+            transition: filter linear 0.5s;
+        }
+
+        input,
+        button {
+            display: block;
+            max-width: 100%;
+            min-width: unset;
+            line-height: 2rem;
+            width: 100%;
+            padding: 0.25rem;
+            margin: 0.25rem;
+            border: none;
+            background-color: #f8f8f8;
+        }
+
+        #form {
+            position: fixed;
+            width: 45vw;
+            max-height: 800px;
+            left: 50%;
+            top: 50%;
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-radius: 0.1rem;
+            transform: translate(-50%, -50%);
+            padding: 50px;
+        }
+
+        #form div {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #form span {
+            display: inline-block;
+            width: 20%;
+            min-width: 5rem;
+            padding: 0.25rem;
+            margin: 0.25rem;
+            line-height: 2rem;
+            text-align: right;
+        }
+
+        #form button {
+            max-width: 200px;
+            min-width: 50px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script>
+        Date.prototype.format = function (format) {
+            var o = {
+                "M+": this.getMonth() + 1, //month
+                "d+": this.getDate(),    //day
+                "h+": this.getHours(),   //hour
+                "m+": this.getMinutes(), //minute
+                "s+": this.getSeconds(), //second
+                "q+": Math.floor((this.getMonth() + 3) / 3),  //quarter
+                "S": this.getMilliseconds() //millisecond
+            }
+            if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+                (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o) if (new RegExp("(" + k + ")").test(format))
+                format = format.replace(RegExp.$1,
+                    RegExp.$1.length == 1 ? o[k] :
+                        ("00" + o[k]).substr(("" + o[k]).length));
+            return format;
+        }
+    </script>
+</head>
+
+<body>
+    <div id="win">
+        <div style="display: flex;z-index: -1;">
+            <input id="by" type="text" placeholder="关键词" style="width: 80%;">
+            <button id="search" style="width: 20%;">搜索</button>
+        </div>
+        <table class="layui-hide" id="demo" lay-filter="test"></table>
+    </div>
+    <div id="mask">
+        <div id="form">
+            <div><span>员工号</span>
+                <input id="empno" type="text" placeholder="员工号">
+            </div>
+            <div><span>员工姓名</span>
+                <input id="ename" type="text" placeholder="员工姓名">
+            </div>
+            <div><span>工作</span>
+                <input id="job" type="text" placeholder="工作">
+            </div>
+            <div><span>上级编号</span>
+                <input id="mgr" type="text" placeholder="上级编号">
+            </div>
+            <div><span>受雇日期</span>
+                <input id="hiredate" type="text" placeholder="受雇日期">
+            </div>
+            <div><span>薪金</span>
+                <input id="sal" type="text" placeholder="薪金">
+            </div>
+            <div><span>佣金</span>
+                <input id="comm" type="text" placeholder="佣金">
+            </div>
+            <div><span>部门编号</span>
+                <input id="deptno" type="text" placeholder="部门编号">
+            </div>
+            <div>
+                <button onclick="hide()">x</button>
+                <button id="submit">提交</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/html" id="barDemo">
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">
+            编辑
+        </a>
+        <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="drop">
+            删除
+        </a>
+    </script>
+
+    <script src="./layui/layui.js?t=1621460603938"></script>
+    <script>
+        function html(id) {
+            return document.getElementById(id).value ? document.getElementById(id).value : document.getElementById(id).innerHTML
+        }
+        function reformat() {
+            for (let lvl = 1; lvl < 25; lvl++) {
+                setTimeout(() => {
+                    var selects = document.querySelectorAll('td[data-field = "hiredate"] > div');
+                    selects.forEach(e => {
+                        if (!/^(\d{4})-(\d{2})-(\d{2})$/.test(e.innerHTML)) {
+                            e.innerHTML = date2str(new Date(Number(e.innerHTML)))
+                        }
+                    });
+                }, 200 * lvl)
+            }
+        }
+        function date2str(date) {
+            return date.format('yyyy-MM-dd')
+        }
+        function str2date(str) {
+            var sp = str.split('-');
+            var d = new Date(sp[0], sp[1] - 1, sp[2], 0, 0, 0, 0);
+            return d
+        }
+        function setVals(empno, ename, job, mgr, hiredate, sal, comm, deptno) {
+            document.getElementById('empno').value = empno;
+            document.getElementById('ename').value = ename;
+            document.getElementById('job').value = job;
+            document.getElementById('mgr').value = mgr;
+            document.getElementById('hiredate').value = date2str(new Date(Number(hiredate)));
+            document.getElementById('sal').value = sal;
+            document.getElementById('comm').value = comm;
+            document.getElementById('deptno').value = deptno;
+        }
+        function hide() {
+            document.body.setAttribute('class', '');
+        }
+        function drop(layer, obj, empnos) {
+            $.ajax({
+                url: './emp?empnos=' + JSON.stringify(empnos.push ? empnos : [empnos]),
+                type: 'DELETE',
+                error: function (data) {
+                    layer.msg('<font size="5">' + data.status + '</font><br>' + data.statusText)
+                    console.log(data)
+                },
+                success: (data, status) => {
+                    console.log(status)
+                    if (status == 'success') {
+                        obj.del();//删除对应行（tr）的DOM结构
+                    }
+                }
+            })
+        }
+        function update(table, obj, empno, ename, job, mgr, hiredate, sal, comm, deptno) {
+            $.ajax({
+                url: 'emp',
+                type: 'put',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    empno: empno,
+                    ename: ename,
+                    job: job,
+                    mgr: mgr,
+                    hiredate: Number(str2date(hiredate)),
+                    sal: sal,
+                    comm: comm,
+                    deptno: deptno
+                }), success: function (data) {
+                    createTable(table, '#demo', 'demoTable');
+                    setTimeout(() => { document.body.setAttribute('class', ''); }, 250)
+                    reformat();
+                }
+            })
+        }
+        function add(table, empno, ename, job, mgr, hiredate, sal, comm, deptno) {
+            $.ajax({
+                url: 'emp',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    empno: empno,
+                    ename: ename,
+                    job: job,
+                    mgr: mgr,
+                    hiredate: Number(str2date(hiredate)),
+                    sal: sal,
+                    comm: comm,
+                    deptno: deptno,
+                }),
+                success: (data) => {
+                    createTable(table, '#demo', 'demoTable');
+                    setTimeout(() => { document.body.setAttribute('class', ''); }, 250)
+                    reformat();
+                }
+            })
+        }
+        function createTable(table, id, tableId) { //执行一个 table 实例
+            table.render({
+                elem: id,
+                height: 800,
+                url: './emp', //数据接口
+                id: tableId,
+                title: '员工',
+                page: false,//开启分页  
+                limits: [10, 20, 50, 100, 2147483647],
+                limit: 2147483647,
+                groups: 10,
+                toolbar: 'default', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                totalRow: false, //开启合计行
+                cols: [[ //表头,
+                    { field: 'empno', title: '员工号', sort: true, fixed: 'right' },
+                    { field: 'ename', title: '员工姓名', sort: true },
+                    { field: 'job', title: '工作', sort: true, totalRow: true },
+                    { field: 'mgr', title: '上级编号', sort: true },
+                    { field: 'hiredate', title: '受雇日期', sort: true },
+                    { field: 'sal', title: '薪金', sort: true, fixed: 'right' },
+                    { field: 'comm', title: '佣金', sort: true, fixed: 'right' },
+                    { field: 'deptno', title: '部门编号', sort: true },
+                    { fixed: 'right', align: 'left', toolbar: '#barDemo' }
+                ]]
+            });
+            setTimeout(() => { document.body.setAttribute('class', ''); }, 250)
+        }
+        layui.config({
+            version: '1621460603938' //为了更新 js 缓存，可忽略
+        });
+
+        //加载模块  
+        layui.use(function () { //亦可加载特定模块：layui.use(['layer', 'laydate', function(){
+            //得到各种内置组件
+            var layer = layui.layer //弹层
+            var laypage = layui.laypage //分页
+            var laydate = layui.laydate //日期
+            var table = layui.table //表格
+            var upload = layui.upload //上传
+            var element = layui.element //元素操作
+            var dropdown = layui.dropdown //下拉菜单
+
+            createTable(table, '#demo', 'demoTable')
+
+            //监听头工具栏事件
+            table.on('toolbar(test)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id)
+                    , data = checkStatus.data; //获取选中的数据
+                switch (obj.event) {
+                    case 'add':
+                        setVals('', '', '', '', '1970-01-01', '', '', '');
+
+                        while (true) {
+                            try {
+                                document.body.setAttribute('class', 'blur');
+                                document.getElementById('submit').onclick = () => {
+                                    add(table, html('empno'), html('ename'), html('job'), html('mgr'), html('hiredate'),
+                                        html('sal'), html('comm'), html('deptno'));
+                                }
+                                break;
+                            } catch (error) {
+                                console.log(error)
+                                alert('格式错误！')
+                            }
+                        }
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                var data = obj.data;//获得当前行数据
+                var layEvent = obj.event; //获得 lay-event 对应的值
+                if (layEvent === 'edit') {
+                    setVals(data.empno, data.ename, data.job, data.mgr, data.hiredate, data.sal, data.comm, data.deptno);
+                    document.body.setAttribute('class', 'blur');
+                    while (true) {
+                        try {
+                            document.getElementById('submit').onclick = () => {
+                                update(table, obj, html('empno'), html('ename'), html('job'), html('mgr'), html('hiredate'),
+                                    html('sal'), html('comm'), html('deptno'));
+                            }
+                            break;
+                        } catch (error) {
+                            console.log(error)
+                            alert('格式错误！')
+                        }
+                    }
+                } else if (layEvent === 'drop') {
+                    drop(layer, obj, [data.empno])
+                }
+            });
+            document.getElementById('search').addEventListener('click',
+                () => {
+                    if (!document.getElementById('by').value) {
+                        return
+                    }
+                    table.render({
+                        elem: '#demo',
+                        height: 800,
+                        url: './emp', //数据接口
+                        id: 'demoTable',
+                        title: '员工',
+                        page: false,//开启分页  
+                        limits: [10, 20, 50, 100, 2147483647],
+                        where: {
+                            name: document.getElementById('by').value,
+                            page: 0,
+                            limit: 2147483647,
+                        },
+                        groups: 10,
+                        toolbar: 'default', //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+                        totalRow: false, //开启合计行
+                        cols: [[ //表头,
+                            { field: 'empno', title: '员工号', sort: true, fixed: 'right' },
+                            { field: 'ename', title: '员工姓名', sort: true },
+                            { field: 'job', title: '工作', sort: true, totalRow: true },
+                            { field: 'mgr', title: '上级编号', sort: true },
+                            { field: 'hiredate', title: '受雇日期', sort: true },
+                            { field: 'sal', title: '薪金', sort: true, fixed: 'right' },
+                            { field: 'comm', title: '佣金', sort: true, fixed: 'right' },
+                            { field: 'deptno', title: '部门编号', sort: true },
+                            { fixed: 'right', align: 'left', toolbar: '#barDemo' }
+                        ]]
+                    });
+                }
+            )
+        });
+        reformat();
+    </script>
+</body>
+
+</html>

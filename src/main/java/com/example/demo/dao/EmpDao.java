@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.alibaba.fastjson.JSON;
 import com.example.demo.bean.EmpBean;
 import com.example.demo.util.DBUtil;
 
@@ -19,8 +18,8 @@ public class EmpDao
             int empno = (Integer)rs.get("empno");
             String ename = (String)rs.get("ename");
             String job = (String)rs.get("job");
-            int mgr = (Integer)rs.get("mgr");
-            int hiredate = (Integer)rs.get("hiredate");
+            Integer mgr = (Integer)rs.get("mgr");
+            long hiredate = (Long)rs.get("hiredate");
             float sal = (Float)rs.get("sal");
             float comm = (Float)rs.get("comm");
             int deptno = (Integer)rs.get("deptno");
@@ -43,7 +42,6 @@ public class EmpDao
         {
             ret.add(getBean(e));
         }
-        System.out.print("RESULT: " + JSON.toJSONString(ret));
         return ret;
     }
 
@@ -102,6 +100,28 @@ public class EmpDao
         return ret;
     }
 
+    public List<EmpBean> get(int index, int count, String ename)
+    {
+        List<EmpBean> ret = new ArrayList<EmpBean>();
+
+        if (ename != null)
+        {
+
+            try
+            {
+                String sql = "select * from emp where ename LIKE ? LIMIT ?,?;";
+                List<Map<String, Object>> res = DBUtil
+                        .executeQuery(sql, "%" + ename + "%", index, count);
+                ret = getBeans(res);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return ret;
+    }
+
     public List<EmpBean> get(int index, int count)
     {
         List<EmpBean> ret = new ArrayList<EmpBean>();
@@ -110,7 +130,7 @@ public class EmpDao
         {
             String sql = "select * from emp ORDER BY `empno` LIMIT ?,?;";
             List<Map<String, Object>> res =
-                    DBUtil.executeQuery(sql, index, count);
+                    DBUtil.executeQuery(sql, Math.max(index - 1, 0), count);
             ret = getBeans(res);
         }
         catch (Exception e)

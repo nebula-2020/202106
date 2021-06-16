@@ -3,8 +3,6 @@ package com.example.demo.util;
 import java.sql.*;
 import java.util.*;
 
-import com.alibaba.fastjson.JSON;
-
 import org.apache.commons.lang3.StringUtils;
 
 public abstract class DBUtil
@@ -138,7 +136,6 @@ public abstract class DBUtil
                     {
                         map.put(meta.getColumnName(i), rs.getObject(i));
                     }
-                    System.out.println(JSON.toJSONString(map));
                     ret.add(map);
                 }
             }
@@ -155,7 +152,6 @@ public abstract class DBUtil
         {
             DBUtil.CloseDatabase(con, pstm, rs);
         }
-        System.out.println(JSON.toJSONString(ret));
         return ret;
     }
 
@@ -186,7 +182,6 @@ public abstract class DBUtil
                 pstm.setObject(i, objs[i - 1]);
             }
             ret = pstm.executeUpdate();
-            System.out.println(ret);
         }
         catch (SQLException e)
         {
